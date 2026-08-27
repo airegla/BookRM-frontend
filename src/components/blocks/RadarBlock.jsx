@@ -13,6 +13,7 @@ export const RadarBlock = () => {
   const [error, setError] = useState(null);
   const [notificandoId, setNotificandoId] = useState(null);
   const [ultimoEnvio, setUltimoEnvio] = useState(null);
+  const [filtro, setFiltro] = useState('');
 
   const cargar = async () => {
     setLoading(true);
@@ -39,10 +40,15 @@ export const RadarBlock = () => {
 
   useEffect(() => { cargar(); }, []);
 
-  const solicitados = pedidos.filter(p => p.estado === 'Solicitado');
-  const ingresados = pedidos.length? pedidos.filter(p => p.estado === 'Ingresado') : radar;
-  const notificados = pedidos.filter(p => p.estado === 'Notificado').slice(0, 50);
-  const pendientes = pedidos.filter(p => p.estado === 'Pendiente');
+  const q = filtro.trim().toLowerCase();
+  const pedidosFiltrados = q
+    ? pedidos.filter(p => `${p.cliente?.nombre || ''} ${p.ean13_legacy} ${p.titulo || ''} ${p.estado}`.toLowerCase().includes(q))
+    : pedidos;
+
+  const solicitados = pedidosFiltrados.filter(p => p.estado === 'Solicitado');
+  const ingresados = pedidosFiltrados.length ? pedidosFiltrados.filter(p => p.estado === 'Ingresado') : radar;
+  const notificados = pedidosFiltrados.filter(p => p.estado === 'Notificado').slice(0, 50);
+  const pendientes = pedidosFiltrados.filter(p => p.estado === 'Pendiente');
 
   const handleMarcarIngresado = async (id) => { await api.updateEstadoPedido(id, 'Ingresado'); cargar(); };
   const handleNotificar = async (id) => {
@@ -53,6 +59,21 @@ export const RadarBlock = () => {
       cargar();
     } catch (e) { setError(e.message); }
     finally { setNotificandoId(null); }
+  };
+
+  const descargarCsv = async (estado) => {
+    try {
+      const csv = await api.exportPedidosCsv(estado);
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `pedidos_${estado || 'todos'}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (e) { setError(e.message); }
   };
 
   const Tabla = ({ lista, tipo }) => {
@@ -98,6 +119,17 @@ const handleCheckStock = async () => {
         <button onClick={handleCheckStock} disabled={checking} style={{ padding: '6px 12px', background: '#ff9800', color: '#fff', border: 'none', borderRadius: '4px', marginLeft: '8px' }}>
   {checking? 'Verificando stock...' : '📦 Verificar ingresos (stock legacy)'}
 </button>
+      </div>
+      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center', margin: '12px 0' }}>
+        <input
+          placeholder="Filtrar (cliente, EAN, título, estado)..."
+          value={filtro}
+          onChange={(e) => setFiltro(e.target.value)}
+          style={{ flex: 1, minWidth: '220px', padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
+        />
+        <button onClick={() => descargarCsv('Pendiente')} style={{ padding: '8px 10px', fontSize: '0.8rem' }}>⬇ CSV Pendientes</button>
+        <button onClick={() => descargarCsv('Solicitado')} style={{ padding: '8px 10px', fontSize: '0.8rem' }}>⬇ CSV Solicitados</button>
+        <button onClick={() => descargarCsv('Notificado')} style={{ padding: '8px 10px', fontSize: '0.8rem' }}>⬇ CSV Notificados</button>
       </div>
       {error && <div style={{ background: '#ffebee', color: '#c62828', padding: '10px', borderRadius: '4px', marginBottom: '12px' }}>{error} — revisá backend en http://localhost:3000/api/pedidos</div>}
       {ultimoEnvio && <div style={{ background: '#e8f5e9', padding: '10px', borderRadius: '4px', marginBottom: '12px', fontSize: '0.85rem' }}>✅ Mail a {ultimoEnvio.cliente?.nombre} — {ultimoEnvio.email?.to} {ultimoEnvio.email?.previewUrl && <a href={ultimoEnvio.email.previewUrl} target="_blank">Ver preview</a>}</div>}
