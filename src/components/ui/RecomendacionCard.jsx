@@ -33,6 +33,11 @@ export const RecomendacionCard = ({ libro, tipo, onAltaRapida }) => {
             <span style={{ padding: '4px 8px', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 'bold', color: '#fff', backgroundColor: esStock? '#2e7d32' : '#ed6c02', flexShrink: 0, alignSelf: 'flex-start' }}>{esStock? `Stock: ${libro.stock}` : 'A Pedir'}</span>
           </div>
           <p style={{ margin: '0 0 8px 0', fontSize: '0.9rem', color: '#555', fontStyle: 'italic' }}>{libro.Autor} — <span style={{ fontWeight: '600' }}>{libro.Editorial}</span></p>
+          {esStock && (
+            <p style={{ margin: '0 0 8px 0', fontSize: '0.8rem', color: '#2e7d32' }}>
+              📍 Local 01: <strong>{libro.stock01 ?? 0}</strong> · Local 02: <strong>{libro.stock02 ?? 0}</strong>
+            </p>
+          )}
         </div>
       </div>
 
@@ -54,17 +59,6 @@ export const RecomendacionCard = ({ libro, tipo, onAltaRapida }) => {
         <p style={{ margin: '0 0 4px 0', color: '#0288d1' }}><strong>Tip:</strong> {libro.Tip_Venta}</p>
         <p style={{ margin: '0', color: '#666' }}><strong>Proveedor:</strong> {libro.proveedor}</p>
       </div>
-
-      {libro.alternativas && libro.alternativas.length > 0 && (
-        <div style={{ marginTop: '8px', paddingTop: '8px', borderTop: '1px dashed rgba(0,0,0,0.15)' }}>
-          <strong style={{ fontSize: '0.78rem', color: '#2e7d32' }}>{esStock ? 'También te puede interesar (en stock):' : 'Alternativas en stock:'}</strong>
-          {libro.alternativas.map((a, i) => (
-            <div key={i} style={{ fontSize: '0.78rem', marginTop: '4px', color: '#333' }}>
-              ✅ {a.titulo} — {a.autor} <span style={{ color: '#777' }}>({a.editorial})</span>
-            </div>
-          ))}
-        </div>
-      )}
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginTop: '12px', gap: 8 }}>
         <div>

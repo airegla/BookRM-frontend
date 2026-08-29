@@ -81,7 +81,7 @@ export const AsistenteBlock = ({ onSeleccionarParaPedido }) => {
             disabled={loading || !prompt.trim()}
             style={{ padding: '10px 20px', backgroundColor: loading ? '#9e9e9e' : '#2e7d32', color: '#fff', border: 'none', borderRadius: '4px', fontSize: '0.95rem', cursor: loading ? 'not-allowed' : 'pointer' }}
           >
-            {loading ? 'Consultando a Gemini y verificando stock...' : 'Buscar Recomendaciones'}
+            {loading ? 'Seleccionando propuesta y verificando stock...' : 'Buscar Recomendaciones'}
           </button>
           {(res.en_stock.length > 0 || res.a_pedir.length > 0) && (
             <button type="button" onClick={limpiarResultado} style={{ padding: '10px 16px', backgroundColor: '#757575', color: '#fff', border: 'none', borderRadius: '4px', fontSize: '0.95rem', cursor: 'pointer' }}>Limpiar</button>
@@ -91,7 +91,7 @@ export const AsistenteBlock = ({ onSeleccionarParaPedido }) => {
 
       {error && <div style={{ padding: '12px', backgroundColor: '#ffebee', color: '#c62828', borderRadius: '4px', marginBottom: '16px' }}><strong>Error:</strong> {error}</div>}
 
-      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '20px', alignItems: 'start' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: (res.a_pedir.length > 0 && !isMobile) ? '1fr 1fr' : '1fr', gap: '20px', alignItems: 'start' }}>
         <div>
           <h3 style={{ color: '#2e7d32', borderBottom: '2px solid #2e7d32', paddingBottom: '8px' }}>En Stock ({res.en_stock.length})</h3>
           {res.en_stock.length === 0 && !loading && <p style={{ color: '#999', fontStyle: 'italic', fontSize: '0.9rem' }}>Sin resultados en stock local.</p>}
@@ -99,14 +99,15 @@ export const AsistenteBlock = ({ onSeleccionarParaPedido }) => {
             <RecomendacionCard key={`stock-${index}`} libro={libro} tipo="en_stock" onAltaRapida={onSeleccionarParaPedido} clienteId={clienteSeleccionado} />
           ))}
         </div>
-        <div>
-          <h3 style={{ color: '#ed6c02', borderBottom: '2px solid #ed6c02', paddingBottom: '8px' }}>A Pedir — sin stock ({res.a_pedir.length})</h3>
-          <p style={{ color: '#888', fontSize: '0.8rem', margin: '4px 0 12px' }}>Ingresados al catálogo en los últimos 6 meses; probablemente pedibles al proveedor.</p>
-          {res.a_pedir.length === 0 && !loading && <p style={{ color: '#999', fontStyle: 'italic', fontSize: '0.9rem' }}>Sin títulos recientes para pedir.</p>}
-          {res.a_pedir.map((libro, index) => (
-            <RecomendacionCard key={`pedir-${index}`} libro={libro} tipo="a_pedir" onAltaRapida={onSeleccionarParaPedido} clienteId={clienteSeleccionado} />
-          ))}
-        </div>
+        {res.a_pedir.length > 0 && (
+          <div>
+            <h3 style={{ color: '#ed6c02', borderBottom: '2px solid #ed6c02', paddingBottom: '8px' }}>A Pedir — sin stock ({res.a_pedir.length})</h3>
+            <p style={{ color: '#888', fontSize: '0.8rem', margin: '4px 0 12px' }}>Ingresados al catálogo en los últimos 6 meses; probablemente pedibles al proveedor.</p>
+            {res.a_pedir.map((libro, index) => (
+              <RecomendacionCard key={`pedir-${index}`} libro={libro} tipo="a_pedir" onAltaRapida={onSeleccionarParaPedido} clienteId={clienteSeleccionado} />
+            ))}
+          </div>
+        )}
       </div>
 
       {showClienteRapido && (

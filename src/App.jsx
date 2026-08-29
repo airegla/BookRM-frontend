@@ -11,6 +11,7 @@ import { ProveedoresBlock } from './components/blocks/ProveedoresBlock';
 import { ConfigBlock } from './components/blocks/ConfigBlock';
 import { UsuariosBlock } from './components/blocks/UsuariosBlock';
 import { PropuestasBlock } from './components/blocks/PropuestasBlock';
+import { LogsBlock } from './components/blocks/LogsBlock';
 import { Login } from './components/Login';
 import { api, getUser, getToken, setToken, setUser } from './api/api';
 import { useIsMobile } from './hooks/useIsMobile';
@@ -61,7 +62,7 @@ export function App() {
     { id: 'radar', icon: '📨', label: 'Radar / Avisos' },
     { id: 'propuestas', icon: '📚', label: 'Propuestas' },
     { id: 'config', icon: '⚙️', label: 'Configuración' },
-    ...(user?.rol === 'admin' ? [{ id: 'usuarios', icon: '👤', label: 'Usuarios' }] : [])
+    ...(user?.rol === 'admin' ? [{ id: 'usuarios', icon: '👤', label: 'Usuarios' }, { id: 'logs', icon: '📋', label: 'Logs' }] : [])
   ];
 
   const NavButton = ({ id, icon, label }) => (
@@ -100,6 +101,7 @@ export function App() {
             <Tab id="config" label="⚙️ Config" />
             <Tab id="clientes" label="👥 Clientes" />
             {user?.rol === 'admin' && <Tab id="usuarios" label="👤 Usuarios" />}
+            {user?.rol === 'admin' && <Tab id="logs" label="📋 Logs" />}
           </div>
         </nav>
       )}
@@ -114,13 +116,17 @@ export function App() {
       )}
 
       <main style={{ padding: isMobile ? '14px 0 84px' : '0 0 40px' }}>
-        {tabActiva==='asistente' && <AsistenteBlock onSeleccionarParaPedido={handleSel} />}
+        {/* El Asistente se mantiene montado para no perder la búsqueda al cambiar de pestaña. */}
+        <div style={{ display: tabActiva==='asistente' ? 'block' : 'none' }}>
+          <AsistenteBlock onSeleccionarParaPedido={handleSel} />
+        </div>
         {tabActiva==='pedidos' && <PedidoBlock libroPrecargado={libroSel} onClearPrecarga={clear} />}
         {tabActiva==='radar' && <RadarBlock />}
         {tabActiva==='propuestas' && <PropuestasBlock />}
         {tabActiva==='proveedores' && <ProveedoresBlock />}
         {tabActiva==='config' && <ConfigBlock />}
         {tabActiva==='usuarios' && <UsuariosBlock />}
+        {tabActiva==='logs' && <LogsBlock />}
         {tabActiva==='clientes' && <ClienteBlock />}
       </main>
 

@@ -98,4 +98,7 @@ export const api = {
   generarPropuesta: (idCliente) => request(`/propuestas/generar/${idCliente}`, { method: 'POST' }),
   enviarPropuesta: (id) => request(`/propuestas/${id}/enviar`, { method: 'POST' }),
   deletePropuesta: (id) => request(`/propuestas/${id}`, { method: 'DELETE' }),
+
+  getLogs: (limite = 200) => request(`/logs?limite=${encodeURIComponent(limite)}`),
+  clearLogs: () => request('/logs', { method: 'DELETE' }),
 };

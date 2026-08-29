@@ -43,7 +43,7 @@ Todas tras el login (JWT). Roles `admin`/`vendedor`.
 
 | Pestaña | Componente | Descripción |
 |---------|------------|-------------|
-| 🤖 Asistente | `AsistenteBlock` | Recomendaciones con stock legacy, alternativas, precio y tapa |
+| 🤖 Asistente | `AsistenteBlock` | Recomendaciones por contenido con stock legacy por local (01/02), precio y tapa; "A Pedir" solo si hay resultados |
 | 📦 Pedidos | `PedidoBlock` | Alta rápida, cambio de estado, edición de EAN13 (Pendiente) |
 | 👥 Clientes | `ClienteBlock` | CRUD, temáticas (SearchMultiSelect) e historial |
 | 🏢 Proveedores | `ProveedoresBlock` | CRUD (id=1 protegido) |
@@ -51,6 +51,7 @@ Todas tras el login (JWT). Roles `admin`/`vendedor`.
 | 📚 Propuestas | `PropuestasBlock` | Propuestas personalizadas (generar/previsualizar/enviar/export) |
 | ⚙️ Config | `ConfigBlock` | Resumen + edición de empresa |
 | 👤 Usuarios | `UsuariosBlock` | CRUD de usuarios (solo admin) |
+| 📋 Logs | `LogsBlock` | Log de actividad (solo admin): ver y limpiar |
 
 Todas las listas tienen **buscador + paginador**; los selects con muchas opciones tienen **búsqueda integrada**.
 
@@ -87,6 +88,7 @@ frontend/
     │   │   ├── AsistenteBlock.jsx
     │   │   ├── ClienteBlock.jsx
     │   │   ├── ConfigBlock.jsx
+    │   │   ├── LogsBlock.jsx
     │   │   ├── PedidoBlock.jsx
     │   │   ├── PropuestasBlock.jsx
     │   │   ├── ProveedoresBlock.jsx
@@ -110,5 +112,7 @@ frontend/
 ## Notas
 
 - El frontend **no usa router**: la navegación es un estado de pestaña en `App.jsx`.
+- La búsqueda del Asistente **no se pierde al cambiar de pestaña**: `AsistenteBlock` se mantiene montado (se oculta con `display:none`).
+- El stock se muestra **diferenciado por local** (Local 01 / Local 02); el total solo suma los locales operativos.
 - La tapa de cada libro se carga desde `GET /api/tapas/:ean13` (endpoint público del backend).
 - El precio y la tapa de las fichas vienen del backend (enriquecidos con la base legacy).
