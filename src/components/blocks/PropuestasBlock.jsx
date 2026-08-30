@@ -7,6 +7,7 @@ import { api } from '../../api/api';
 import { usePagination } from '../../hooks/usePagination';
 import { Pagination } from '../ui/Pagination';
 import { SearchSelect } from '../ui/SearchSelect';
+import DebugTag from '../../ui/DebugTag';
 
 export const PropuestasBlock = () => {
   const [propuestas, setPropuestas] = useState([]);
@@ -81,6 +82,7 @@ export const PropuestasBlock = () => {
 
   return (
     <div style={{ padding: '20px', maxWidth: '1100px', margin: '0 auto' }}>
+      <DebugTag name="PropuestasBlock.jsx" />
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <h2>📚 Propuestas personalizadas</h2>
         <div style={{ display: 'flex', gap: '8px' }}>

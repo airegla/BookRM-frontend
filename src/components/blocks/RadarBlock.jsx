@@ -4,6 +4,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { api } from '../../api/api';
+import DebugTag from '../../ui/DebugTag';
 
 export const RadarBlock = () => {
   const [pedidos, setPedidos] = useState([]);
@@ -113,6 +114,7 @@ const handleCheckStock = async () => {
 
   return (
     <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
+      <DebugTag name="RadarBlock.jsx" />
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <h2>📨 Radar / Avisos</h2>
         <button onClick={cargar} style={{ padding: '6px 12px', fontSize: '0.8rem' }}>🔄 Recargar</button>

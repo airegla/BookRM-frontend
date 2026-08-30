@@ -4,6 +4,7 @@
 
 import React, { useState } from 'react';
 import { api } from '../api/api';
+import DebugTag from '../ui/DebugTag';
 
 export const Login = ({ onLogin }) => {
   const [usuario, setUsuario] = useState('');
@@ -27,6 +28,7 @@ export const Login = ({ onLogin }) => {
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#1a237e' }}>
+      <DebugTag name="Login.jsx" />
       <form onSubmit={handleSubmit} style={{ background: '#fff', padding: '32px', borderRadius: '8px', width: '320px', maxWidth: 'calc(100vw - 32px)', boxShadow: '0 8px 24px rgba(0,0,0,0.25)' }}>
         <h2 style={{ marginTop: 0, textAlign: 'center' }}>BOOK(RM)</h2>
         <p style={{ textAlign: 'center', color: '#666', fontSize: '0.85rem', marginTop: 0 }}>Ingresá con tu usuario</p>

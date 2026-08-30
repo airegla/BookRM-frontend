@@ -15,6 +15,7 @@ import { LogsBlock } from './components/blocks/LogsBlock';
 import { Login } from './components/Login';
 import { api, getUser, getToken, setToken, setUser } from './api/api';
 import { useIsMobile } from './hooks/useIsMobile';
+import DebugTag from './ui/DebugTag';
 
 export function App() {
   const [tabActiva, setTabActiva] = useState('asistente');
@@ -77,6 +78,7 @@ export function App() {
 
   return (
     <div style={{ fontFamily: 'system-ui', minHeight: '100vh', background: '#fafafa' }}>
+      <DebugTag name="App.jsx" />
       <header style={{ background: '#1a237e', color: '#fff', padding: isMobile ? '10px 14px' : '16px 24px' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>

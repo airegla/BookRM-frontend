@@ -4,6 +4,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { api } from '../../api/api';
+import DebugTag from '../../ui/DebugTag';
 
 export const LogsBlock = () => {
   const [logs, setLogs] = useState([]);
@@ -37,6 +38,7 @@ export const LogsBlock = () => {
 
   return (
     <div style={{ padding: '20px', maxWidth: '1100px', margin: '0 auto' }}>
+      <DebugTag name="LogsBlock.jsx" />
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', flexWrap: 'wrap', gap: '8px' }}>
         <h2 style={{ margin: 0 }}>📋 Logs de actividad</h2>
         <div style={{ display: 'flex', gap: '8px' }}>

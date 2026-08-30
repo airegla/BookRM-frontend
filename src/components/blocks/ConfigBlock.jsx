@@ -4,6 +4,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { api } from '../../api/api';
+import DebugTag from '../../ui/DebugTag';
 
 export const ConfigBlock = () => {
   const [cfg, setCfg] = useState(null);
@@ -34,6 +35,7 @@ export const ConfigBlock = () => {
 
   return (
     <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
+      <DebugTag name="ConfigBlock.jsx" />
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <h2>⚙️ Configuración Empresa</h2>
         <button onClick={() => { setMsg(null); setEditing(true); }} style={{ padding: '8px 14px', background: '#1a237e', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>✏️ Editar</button>
@@ -44,6 +46,7 @@ export const ConfigBlock = () => {
         {campo('Email control (bandeja aprobación)', cfg.email_control)}
         {campo('Email compras', cfg.email_compras)}
         {campo('Telegram Chat ID', cfg.telegram_chat_id)}
+        {campo('Telegram Bot Token', cfg.telegram_bot_token)}
         {campo('WhatsApp Phone ID', cfg.whatsapp_phone_id)}
         {campo('Umbral editorial default', cfg.umbral_editorial_default)}
       </div>
@@ -63,6 +66,9 @@ export const ConfigBlock = () => {
             </label>
             <label style={{ display: 'block', marginBottom: '10px' }}>Telegram Chat ID (grupo trabajo)
               <input placeholder="-100123..." value={cfg.telegram_chat_id || ''} onChange={e => setCfg({...cfg, telegram_chat_id: e.target.value})} style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }} />
+            </label>
+            <label style={{ display: 'block', marginBottom: '10px' }}>Telegram Bot Token
+              <input placeholder="123456:ABC..." value={cfg.telegram_bot_token || ''} onChange={e => setCfg({...cfg, telegram_bot_token: e.target.value})} style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }} />
             </label>
             <label style={{ display: 'block', marginBottom: '10px' }}>WhatsApp Phone ID
               <input placeholder="123456..." value={cfg.whatsapp_phone_id || ''} onChange={e => setCfg({...cfg, whatsapp_phone_id: e.target.value})} style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }} />

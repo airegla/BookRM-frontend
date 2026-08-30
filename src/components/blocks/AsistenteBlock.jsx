@@ -8,6 +8,7 @@ import { useIsMobile } from '../../hooks/useIsMobile';
 import { RecomendacionCard } from '../ui/RecomendacionCard';
 import { SearchSelect } from '../ui/SearchSelect';
 import { api } from '../../api/api.js';
+import DebugTag from '../../ui/DebugTag';
 
 export const AsistenteBlock = ({ onSeleccionarParaPedido }) => {
   const [prompt, setPrompt] = useState('');
@@ -47,6 +48,7 @@ export const AsistenteBlock = ({ onSeleccionarParaPedido }) => {
 
   return (
     <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
+      <DebugTag name="AsistenteBlock.jsx" />
       <h2 style={{ marginBottom: '8px' }}>Asistente de Mostrador</h2>
       <p style={{ color: '#666', marginBottom: '16px', fontSize: '0.9rem' }}>
         Ingresá las preferencias o la consulta del cliente. Gemini generará las recomendaciones y se cruzará el stock en tiempo real con la base de datos legacy.

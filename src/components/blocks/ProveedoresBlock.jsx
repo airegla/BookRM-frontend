@@ -6,6 +6,7 @@ import React, { useState, useEffect } from 'react';
 import { api } from '../../api/api';
 import { usePagination } from '../../hooks/usePagination';
 import { Pagination } from '../ui/Pagination';
+import DebugTag from '../../ui/DebugTag';
 
 const FORM_VACIO = { nombre: '', email: '', tipo: 'distribuidora', prv_id_legacy: '', umbral_editorial: 5 };
 
@@ -53,6 +54,7 @@ export const ProveedoresBlock = () => {
 
   return (
     <div style={{ padding: '20px', maxWidth: '1000px', margin: '0 auto' }}>
+      <DebugTag name="ProveedoresBlock.jsx" />
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <h2>🏢 Proveedores / Editoriales - Config mails</h2>
         <button onClick={abrirCrear} style={{ padding: '8px 14px', background: '#1a237e', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>+ Agregar</button>

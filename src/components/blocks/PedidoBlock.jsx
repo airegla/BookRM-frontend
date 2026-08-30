@@ -9,6 +9,7 @@ import { useIsMobile } from '../../hooks/useIsMobile';
 import { Pagination } from '../ui/Pagination';
 import { SearchSelect } from '../ui/SearchSelect';
 import { ESTADOS_PEDIDO } from '../../constants';
+import DebugTag from '../../ui/DebugTag';
 
 const colorEstado = (estado) => {
   switch (estado) {
@@ -80,6 +81,7 @@ export const PedidoBlock = ({ libroPrecargado, onClearPrecarga }) => {
 
   return (
     <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
+      <DebugTag name="PedidoBlock.jsx" />
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <h2 style={{ margin: 0 }}>Gestión de Pedidos</h2>
         <button onClick={() => setShowAlta(true)} style={{ padding: '8px 14px', background: '#2e7d32', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>+ Crear pedido</button>
