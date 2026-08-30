@@ -86,6 +86,11 @@ export const api = {
   getEmpresaConfig: () => request('/empresa-config'),
   updateEmpresaConfig: (data) => request('/empresa-config', { method: 'PUT', body: JSON.stringify(data) }),
 
+  getCatalogo: () => request('/catalogo'),
+  getCatalogoItem: (id) => request(`/catalogo/${id}`),
+  updateCatalogoItem: (id, data) => request(`/catalogo/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+  deleteCatalogoItem: (id) => request(`/catalogo/${id}`, { method: 'DELETE' }),
+
   exportPendientesCsv: () => requestCsv('/export/pendientes'),
   exportRecomendacionesCsv: () => requestCsv('/export/recomendaciones'),
   exportPedidosCsv: (estado = '') => requestCsv('/export/pedidos?estado=' + encodeURIComponent(estado)),
