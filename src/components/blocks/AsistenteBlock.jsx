@@ -51,7 +51,7 @@ export const AsistenteBlock = ({ onSeleccionarParaPedido }) => {
       <DebugTag name="AsistenteBlock.jsx" />
       <h2 style={{ marginBottom: '8px' }}>Asistente de Mostrador</h2>
       <p style={{ color: '#666', marginBottom: '16px', fontSize: '0.9rem' }}>
-        Ingresá las preferencias o la consulta del cliente. Gemini generará las recomendaciones y se cruzará el stock en tiempo real con la base de datos legacy.
+        Ingresá las preferencias o la consulta del cliente. El Asistente generará las recomendaciones y se cruzará el stock en tiempo real con la base de datos legacy.
       </p>
 
       {/* Cliente rápido (modal) */}
@@ -92,6 +92,10 @@ export const AsistenteBlock = ({ onSeleccionarParaPedido }) => {
       </form>
 
       {error && <div style={{ padding: '12px', backgroundColor: '#ffebee', color: '#c62828', borderRadius: '4px', marginBottom: '16px' }}><strong>Error:</strong> {error}</div>}
+
+      {res.modo === 'contenido' && (
+        <p style={{ color: '#555', fontSize: '0.85rem', margin: '0 0 12px' }}>🔎 Búsqueda por contenido del catálogo (sin sugerencia de venta).</p>
+      )}
 
       <div style={{ display: 'grid', gridTemplateColumns: (res.a_pedir.length > 0 && !isMobile) ? '1fr 1fr' : '1fr', gap: '20px', alignItems: 'start' }}>
         <div>

@@ -55,9 +55,9 @@ export const RecomendacionCard = ({ libro, tipo, onAltaRapida }) => {
 
       <p style={{ margin: '0 0 8px 0', fontSize: '0.85rem' }}>{libro.Resumen}</p>
       <div style={{ fontSize: '0.8rem', borderTop: '1px solid rgba(0,0,0,0.1)', paddingTop: '8px', marginTop: '8px' }}>
-        <p style={{ margin: '0 0 4px 0' }}><strong>¿Por qué?:</strong> {libro.Justificacion}</p>
-        <p style={{ margin: '0 0 4px 0', color: '#0288d1' }}><strong>Tip:</strong> {libro.Tip_Venta}</p>
-        <p style={{ margin: '0', color: '#666' }}><strong>Proveedor:</strong> {libro.proveedor}</p>
+        {libro.Justificacion ? <p style={{ margin: '0 0 4px 0' }}><strong>¿Por qué?:</strong> {libro.Justificacion}</p> : null}
+        {libro.Tip_Venta ? <p style={{ margin: '0 0 4px 0', color: '#0288d1' }}><strong>Tip:</strong> {libro.Tip_Venta}</p> : null}
+        {libro.proveedor ? <p style={{ margin: '0', color: '#666' }}><strong>Proveedor:</strong> {libro.proveedor}</p> : null}
       </div>
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginTop: '12px', gap: 8 }}>

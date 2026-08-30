@@ -43,7 +43,7 @@ Todas tras el login (JWT). Roles `admin`/`vendedor`.
 
 | Pestaña | Componente | Descripción |
 |---------|------------|-------------|
-| 🤖 Asistente | `AsistenteBlock` | Recomendaciones por contenido con stock legacy por local (01/02), precio y tapa; "A Pedir" solo si hay resultados |
+| 🤖 Asistente | `AsistenteBlock` | Recomendaciones por contenido con stock legacy por local (01/02), precio y tapa; "A Pedir" solo si hay resultados. En modo contenido muestra el aviso "🔎 Búsqueda por contenido" y las cards ocultan los campos de venta vacíos |
 | 📦 Pedidos | `PedidoBlock` | Alta rápida, cambio de estado, edición de EAN13 (Pendiente) |
 | 👥 Clientes | `ClienteBlock` | CRUD, temáticas (SearchMultiSelect) e historial |
 | 🏢 Proveedores | `ProveedoresBlock` | CRUD (id=1 protegido) |
