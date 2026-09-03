@@ -21,6 +21,7 @@ export const ClienteBlock = () => {
     nombre: '',
     telefono: '',
     email: '',
+    notas_preferencias: '',
     tematicasIds: []
   });
   const [historial, setHistorial] = useState(null);
@@ -55,6 +56,7 @@ export const ClienteBlock = () => {
       nombre: formData.nombre,
       telefono: formData.telefono,
       email: formData.email,
+      notas_preferencias: formData.notas_preferencias || '',
       tematicasIds: formData.tematicasIds || []
     };
 
@@ -80,6 +82,7 @@ export const ClienteBlock = () => {
       nombre: cliente.nombre || '',
       telefono: cliente.telefono || '',
       email: cliente.email || '',
+      notas_preferencias: cliente.notas_preferencias || '',
       tematicasIds: cliente.tematicas ? cliente.tematicas.map(t => t.id_tematica) : []
     });
     setModalCliente({ modo: 'editar', id: cliente.id_cliente });
@@ -96,7 +99,7 @@ export const ClienteBlock = () => {
   };
 
   const limpiarFormulario = () => {
-    setFormData({ id_cliente: null, nombre: '', telefono: '', email: '', tematicasIds: [] });
+    setFormData({ id_cliente: null, nombre: '', telefono: '', email: '', notas_preferencias: '', tematicasIds: [] });
   };
 
   const verHistorial = async (cliente) => {
@@ -160,6 +163,7 @@ export const ClienteBlock = () => {
                       ? c.tematicas.map(t => t.nombre_tematica || `ID:${t.id_tematica}`).join(', ')
                       : 'Sin temáticas'}
                   </div>
+                  {c.notas_preferencias && <div style={{ fontSize: '0.8rem', color: '#666', marginTop: 4, fontStyle: 'italic' }}>🗒️ {c.notas_preferencias}</div>}
                   <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
                     <button onClick={() => verHistorial(c)} style={{ flex: 1, padding: '8px', background: '#0288d1', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>Historial</button>
                     <button onClick={() => abrirEditarCliente(c)} style={{ flex: 1, padding: '8px', background: '#fff', border: '1px solid #ccc', borderRadius: '6px', cursor: 'pointer' }}>Editar</button>
@@ -177,6 +181,7 @@ export const ClienteBlock = () => {
               <th style={{ padding: '10px' }}>Teléfono</th>
               <th style={{ padding: '10px' }}>Email</th>
               <th style={{ padding: '10px' }}>Temáticas</th>
+              <th style={{ padding: '10px' }}>Notas</th>
               <th style={{ padding: '10px' }}>Acciones</th>
             </tr>
           </thead>
@@ -192,6 +197,7 @@ export const ClienteBlock = () => {
                     ? c.tematicas.map(t => t.nombre_tematica || `ID:${t.id_tematica}`).join(', ')
                     : 'Ninguna'}
                 </td>
+                <td style={{ padding: '10px', fontSize: '0.8rem', color: '#666', maxWidth: '240px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={c.notas_preferencias || ''}>{c.notas_preferencias || '-'}</td>
                 <td style={{ padding: '10px' }}>
                   <button onClick={() => verHistorial(c)} style={{ marginRight: '6px', padding: '4px 8px', cursor: 'pointer', backgroundColor: '#0288d1', color: '#fff', border: 'none', borderRadius: '4px' }}>
                     Historial
@@ -225,6 +231,17 @@ export const ClienteBlock = () => {
             <label style={{ display: 'block', marginBottom: '10px' }}>Email
               <input type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }} />
             </label>
+            <label style={{ display: 'block', marginBottom: '10px' }}>Notas de Preferencias y Perfil Comercial
+              <textarea
+                rows={3}
+                maxLength={800}
+                value={formData.notas_preferencias || ''}
+                onChange={(e) => setFormData({ ...formData, notas_preferencias: e.target.value })}
+                placeholder="Autoras/es favoritos, géneros, regalos, lo que sabés del cliente..."
+                style={{ width: '100%', padding: '8px', boxSizing: 'border-box', resize: 'vertical' }}
+              />
+              <span style={{ fontSize: '0.75rem', color: '#999' }}>Se usa para perfilar el cliente (recomendaciones/propuestas). {(formData.notas_preferencias || '').length}/800</span>
+            </label>
             <div style={{ marginBottom: '16px' }}>
               <label style={{ fontSize: '0.85rem', color: '#555', display: 'block', marginBottom: '4px' }}>Temáticas de interés</label>
               <SearchMultiSelect
@@ -256,6 +273,9 @@ export const ClienteBlock = () => {
                 <p style={{ margin: '8px 0', fontSize: '0.85rem', color: '#555' }}>
                   Temáticas: {historial.data.cliente.tematicas?.length ? historial.data.cliente.tematicas.map(t => t.nombre_tematica || t.id_tematica).join(', ') : 'Ninguna'}
                 </p>
+                {historial.data.cliente.notas_preferencias && (
+                  <p style={{ margin: '4px 0 8px', fontSize: '0.85rem', color: '#666', fontStyle: 'italic' }}>🗒️ {historial.data.cliente.notas_preferencias}</p>
+                )}
                 <h4 style={{ marginBottom: '6px' }}>Pedidos ({historial.data.pedidos.length})</h4>
                 {historial.data.pedidos.length === 0 ? <p style={{ color: '#999', fontSize: '0.85rem' }}>Sin pedidos.</p> : (
                   <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.82rem', marginBottom: '16px' }}>

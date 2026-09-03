@@ -13,6 +13,7 @@ import { UsuariosBlock } from './components/blocks/UsuariosBlock';
 import { PropuestasBlock } from './components/blocks/PropuestasBlock';
 import { LogsBlock } from './components/blocks/LogsBlock';
 import { CatalogoBlock } from './components/blocks/CatalogoBlock';
+import { LlmAuditBlock } from './components/blocks/LlmAuditBlock';
 import { Login } from './components/Login';
 import { api, getUser, getToken, setToken, setUser } from './api/api';
 import { useIsMobile } from './hooks/useIsMobile';
@@ -64,7 +65,7 @@ export function App() {
     { id: 'radar', icon: '📨', label: 'Radar / Avisos' },
     { id: 'propuestas', icon: '📚', label: 'Propuestas' },
     { id: 'config', icon: '⚙️', label: 'Configuración' },
-    ...(user?.rol === 'admin' ? [{ id: 'usuarios', icon: '👤', label: 'Usuarios' }, { id: 'logs', icon: '📋', label: 'Logs' }, { id: 'catalogo', icon: '🗂', label: 'Catálogo' }] : [])
+    ...(user?.rol === 'admin' ? [{ id: 'usuarios', icon: '👤', label: 'Usuarios' }, { id: 'logs', icon: '📋', label: 'Logs' }, { id: 'llmaudit', icon: '🧠', label: 'Auditoría LLM' }, { id: 'catalogo', icon: '🗂', label: 'Catálogo' }] : [])
   ];
 
   const NavButton = ({ id, icon, label }) => (
@@ -105,6 +106,7 @@ export function App() {
             <Tab id="clientes" label="👥 Clientes" />
             {user?.rol === 'admin' && <Tab id="usuarios" label="👤 Usuarios" />}
             {user?.rol === 'admin' && <Tab id="logs" label="📋 Logs" />}
+            {user?.rol === 'admin' && <Tab id="llmaudit" label="🧠 Auditoría LLM" />}
             {user?.rol === 'admin' && <Tab id="catalogo" label="🗂 Catálogo" />}
           </div>
         </nav>
@@ -131,6 +133,7 @@ export function App() {
         {tabActiva==='config' && <ConfigBlock />}
         {tabActiva==='usuarios' && <UsuariosBlock />}
         {tabActiva==='logs' && <LogsBlock />}
+        {tabActiva==='llmaudit' && <LlmAuditBlock />}
         {tabActiva==='catalogo' && <CatalogoBlock />}
         {tabActiva==='clientes' && <ClienteBlock />}
       </main>

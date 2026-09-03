@@ -5,6 +5,9 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../../api/api';
 import DebugTag from '../../ui/DebugTag';
+import { useIsMobile } from '../../hooks/useIsMobile';
+import { usePagination } from '../../hooks/usePagination';
+import { Pagination } from '../ui/Pagination';
 
 export const RadarBlock = () => {
   const [pedidos, setPedidos] = useState([]);
@@ -15,6 +18,7 @@ export const RadarBlock = () => {
   const [notificandoId, setNotificandoId] = useState(null);
   const [ultimoEnvio, setUltimoEnvio] = useState(null);
   const [filtro, setFiltro] = useState('');
+  const isMobile = useIsMobile();
 
   const cargar = async () => {
     setLoading(true);
@@ -48,8 +52,16 @@ export const RadarBlock = () => {
 
   const solicitados = pedidosFiltrados.filter(p => p.estado === 'Solicitado');
   const ingresados = pedidosFiltrados.length ? pedidosFiltrados.filter(p => p.estado === 'Ingresado') : radar;
-  const notificados = pedidosFiltrados.filter(p => p.estado === 'Notificado').slice(0, 50);
+  const notificados = pedidosFiltrados.filter(p => p.estado === 'Notificado').slice(0, 300);
   const pendientes = pedidosFiltrados.filter(p => p.estado === 'Pendiente');
+
+  // Paginación independiente por sección (el Pagination no se muestra si hay <= 1 página).
+  const radarSearch = (p) => `${p.cliente?.nombre || ''} ${p.ean13_legacy || p.ean13 || ''} ${p.titulo || ''} ${p.estado} #${p.id_pedido || p.id || ''}`;
+  const PAG = 8;
+  const pagPend = usePagination(pendientes, radarSearch, PAG);
+  const pagSoli = usePagination(solicitados, radarSearch, PAG);
+  const pagIngr = usePagination(ingresados, radarSearch, PAG);
+  const pagNoti = usePagination(notificados, radarSearch, PAG);
 
   const handleMarcarIngresado = async (id) => { await api.updateEstadoPedido(id, 'Ingresado'); cargar(); };
   const handleNotificar = async (id) => {
@@ -101,16 +113,40 @@ export const RadarBlock = () => {
       </table>
     );
   };
-  const [checking, setChecking] = useState(false);
-const handleCheckStock = async () => {
-  setChecking(true);
-  try {
-    const r = await api.checkIngresos();
-    alert(`Revisados: ${r.revisados} | Pasaron a Ingresado: ${r.actualizados}`);
-    cargar();
-  } catch (e) { setError(e.message); }
-  finally { setChecking(false); }
-};
+  // Sección con su tabla paginada. Sin estado propio: recibe la paginación desde el padre.
+  const Seccion = ({ titulo, color, lista, pag }) => (
+    <div style={{ background: '#fff', padding: '12px', borderRadius: '8px', border: '1px solid #e0e0e0', minWidth: 0 }}>
+      <h3 style={{ marginTop: 0, color: color || '#333' }}>{titulo} ({lista.length})</h3>
+      <Tabla lista={pag.pageItems} tipo={titulo} />
+      <div style={{ display: 'flex', justifyContent: 'center', marginTop: '8px' }}>
+        <Pagination page={pag.page} totalPages={pag.totalPages} onChange={pag.setPage} />
+      </div>
+    </div>
+  );
+  const [accion, setAccion] = useState(null);       // nombre de la acción corriendo
+  const [resultadoAccion, setResultadoAccion] = useState(null);
+
+  const resumenAccion = (nombre, r) => {
+    switch (nombre) {
+      case 'despachar': return `Pedidos despachados: ${r.pedidos_despachados} | Grupos: ${r.grupos} | Expirados a Agotado: ${r.expirados}`;
+      case 'verificar': return `Revisados: ${r.revisados} | Pasaron a Ingresado: ${r.actualizados}`;
+      case 'notificarIngresos': return `Grupos: ${r.grupos} | Mails enviados: ${r.enviados} | Sin email (marcados Notificado): ${r.sin_email}`;
+      case 'notificarAgotados': return `Grupos: ${r.grupos} | Mails enviados: ${r.enviados} | Sin email: ${r.sin_email}`;
+      default: return JSON.stringify(r).slice(0, 200);
+    }
+  };
+
+  const ejecutarAccion = async (nombre, fn) => {
+    setAccion(nombre);
+    setResultadoAccion(null);
+    setError(null);
+    try {
+      const r = await fn();
+      setResultadoAccion({ nombre, texto: resumenAccion(nombre, r) });
+      cargar();
+    } catch (e) { setError(e.message); }
+    finally { setAccion(null); }
+  };
 
   return (
     <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
@@ -118,10 +154,16 @@ const handleCheckStock = async () => {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <h2>📨 Radar / Avisos</h2>
         <button onClick={cargar} style={{ padding: '6px 12px', fontSize: '0.8rem' }}>🔄 Recargar</button>
-        <button onClick={handleCheckStock} disabled={checking} style={{ padding: '6px 12px', background: '#ff9800', color: '#fff', border: 'none', borderRadius: '4px', marginLeft: '8px' }}>
-  {checking? 'Verificando stock...' : '📦 Verificar ingresos (stock legacy)'}
-</button>
       </div>
+      {/* Acciones manuales (V3) */}
+      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center', margin: '10px 0' }}>
+        <button disabled={!!accion} onClick={() => ejecutarAccion('despachar', () => api.despacharPendientes())} style={{ padding: '8px 12px', background: '#6a1b9a', color: '#fff', border: 'none', borderRadius: '4px', cursor: accion ? 'not-allowed' : 'pointer' }}>🚀 Despachar Pendientes a Proveedores</button>
+        <button disabled={!!accion} onClick={() => ejecutarAccion('verificar', () => api.verificarIngresos())} style={{ padding: '8px 12px', background: '#ff9800', color: '#fff', border: 'none', borderRadius: '4px', cursor: accion ? 'not-allowed' : 'pointer' }}>📦 Verificar Ingresos</button>
+        <button disabled={!!accion} onClick={() => ejecutarAccion('notificarIngresos', () => api.notificarIngresos())} style={{ padding: '8px 12px', background: '#2e7d32', color: '#fff', border: 'none', borderRadius: '4px', cursor: accion ? 'not-allowed' : 'pointer' }}>📧 Notificar Ingresos (consolidado)</button>
+        <button disabled={!!accion} onClick={() => ejecutarAccion('notificarAgotados', () => api.notificarAgotados())} style={{ padding: '8px 12px', background: '#c62828', color: '#fff', border: 'none', borderRadius: '4px', cursor: accion ? 'not-allowed' : 'pointer' }}>⚠️ Notificar Agotados</button>
+        {accion && <span style={{ color: '#555', fontSize: '0.85rem' }}>Procesando...</span>}
+      </div>
+      {resultadoAccion && <div style={{ background: '#e8f5e9', padding: '10px', borderRadius: '4px', marginBottom: '10px', fontSize: '0.85rem' }}>✅ {resultadoAccion.texto}</div>}
       <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center', margin: '12px 0' }}>
         <input
           placeholder="Filtrar (cliente, EAN, título, estado)..."
@@ -138,13 +180,12 @@ const handleCheckStock = async () => {
       {loading? <p>Cargando...</p> : (
         <>
           <p style={{ color: '#666', fontSize: '0.9rem' }}>Total pedidos: {pedidos.length} | Pendiente: {pendientes.length} | Solicitado: {solicitados.length} | Ingresado: {ingresados.length} | Notificado: {notificados.length}</p>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
-            <div style={{ background: '#fff', padding: '12px', borderRadius: '8px', border: '1px solid #e0e0e0' }}><h3 style={{ marginTop: 0, color: '#ef6c00' }}>Pendiente ({pendientes.length})</h3><Tabla lista={pendientes} tipo="Pendiente" /></div>
-            <div style={{ background: '#fff', padding: '12px', borderRadius: '8px', border: '1px solid #e0e0e0' }}><h3 style={{ marginTop: 0, color: '#ef6c00' }}>Solicitado ({solicitados.length})</h3><Tabla lista={solicitados} tipo="Solicitado" /></div>
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-            <div style={{ background: '#fff', padding: '12px', borderRadius: '8px', border: '1px solid #e0e0e0' }}><h3 style={{ marginTop: 0, color: '#2e7d32' }}>Ingresado ({ingresados.length})</h3><Tabla lista={ingresados} tipo="Ingresado" /></div>
-            <div style={{ background: '#fff', padding: '12px', borderRadius: '8px', border: '1px solid #e0e0e0' }}><h3 style={{ marginTop: 0 }}>Notificado ({notificados.length})</h3><Tabla lista={notificados} tipo="Notificado" /></div>
+          {/* Una sección tras otra en mobile (evita romper el ancho); 2 columnas en desktop. */}
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '16px', alignItems: 'start' }}>
+            <Seccion titulo="Pendiente" color="#ef6c00" lista={pendientes} pag={pagPend} />
+            <Seccion titulo="Solicitado" color="#ef6c00" lista={solicitados} pag={pagSoli} />
+            <Seccion titulo="Ingresado" color="#2e7d32" lista={ingresados} pag={pagIngr} />
+            <Seccion titulo="Notificado" color="#333" lista={notificados} pag={pagNoti} />
           </div>
         </>
       )}

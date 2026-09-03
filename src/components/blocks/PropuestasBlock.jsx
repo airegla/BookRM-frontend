@@ -90,7 +90,7 @@ export const PropuestasBlock = () => {
           <button onClick={() => { setClienteSel(''); setModalGenerar(true); }} style={{ padding: '8px 14px', background: '#1a237e', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>+ Generar propuesta</button>
         </div>
       </div>
-      <p style={{ color: '#666', fontSize: '0.9rem' }}>Propuestas de lectura armadas con Gemini a partir de las temáticas de cada cliente, solo con libros en stock.</p>
+      <p style={{ color: '#666', fontSize: '0.9rem' }}>Propuestas de lectura armadas con el Asistente a partir de las temáticas de cada cliente (Toma todas las palbras en ese campo como referencia), solo con libros en stock.</p>
 
       {error && <div style={{ background: '#ffebee', color: '#c62828', padding: '10px', borderRadius: '4px', marginBottom: '12px' }}>{error}</div>}
 

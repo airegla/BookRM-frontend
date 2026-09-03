@@ -43,15 +43,16 @@ Todas tras el login (JWT). Roles `admin`/`vendedor`.
 
 | Pestaña | Componente | Descripción |
 |---------|------------|-------------|
-| 🤖 Asistente | `AsistenteBlock` | Recomendaciones por contenido con stock legacy por local (01/02), precio y tapa; "A Pedir" solo si hay resultados. En modo contenido muestra el aviso "🔎 Búsqueda por contenido" y las cards ocultan los campos de venta vacíos |
-| 📦 Pedidos | `PedidoBlock` | Alta rápida, cambio de estado, edición de EAN13 (Pendiente) |
-| 👥 Clientes | `ClienteBlock` | CRUD, temáticas (SearchMultiSelect) e historial |
+| 🤖 Asistente | `AsistenteBlock` | Recomendaciones por contenido con stock por local (01/02), precio y tapa. Consulta limitada a 300 caracteres (contador). Modo contenido: digesto completo y búsqueda por autor. "A Pedir" solo si hay resultados |
+| 📦 Pedidos | `PedidoBlock` | Alta rápida con cantidad/observaciones, cambio de estado, edición de EAN13/cant/obs (Pendiente), badge `Intentos: X/3` |
+| 👥 Clientes | `ClienteBlock` | CRUD, temáticas (SearchMultiSelect), historial, notas de preferencias y anti-duplicados (mail/teléfono únicos) |
 | 🏢 Proveedores | `ProveedoresBlock` | CRUD (id=1 protegido) |
-| 📨 Radar | `RadarBlock` | Seguimiento por estado + export CSV |
+| 📨 Radar | `RadarBlock` | Seguimiento por estado con secciones apiladas en mobile y paginador por estado + export CSV + botones de acción (despachar / verificar / notificar ingresos / notificar agotados) |
 | 📚 Propuestas | `PropuestasBlock` | Propuestas personalizadas (generar/previsualizar/enviar/export) |
-| ⚙️ Config | `ConfigBlock` | Resumen + edición de empresa |
+| ⚙️ Config | `ConfigBlock` | Config de empresa (modal) + **toggles** de comportamiento (ON/OFF, valores, volver a default) |
 | 👤 Usuarios | `UsuariosBlock` | CRUD de usuarios (solo admin) |
 | 📋 Logs | `LogsBlock` | Log de actividad (solo admin): ver y limpiar |
+| 🧠 Auditoría LLM | `LlmAuditBlock` | Auditoría de llamadas LLM (solo admin): filtro por módulo, detalle de prompt/respuesta, modelo y latencia |
 
 Todas las listas tienen **buscador + paginador**; los selects con muchas opciones tienen **búsqueda integrada**.
 
@@ -59,9 +60,10 @@ Todas las listas tienen **buscador + paginador**; los selects con muchas opcione
 
 En pantallas ≤640px:
 
-- **Navegación inferior fija**: Asistente · Pedidos · Clientes · Proveed. · **⋯ Más** (panel con Radar, Propuestas, Config, Usuarios).
+- **Navegación inferior fija**: Asistente · Pedidos · Clientes · Proveed. · **⋯ Más** (panel con Radar, Propuestas, Config, Usuarios/Logs/Auditoría LLM/Catálogo para admin).
 - Las listas de **Clientes** y **Pedidos** se muestran como **tarjetas** (no tablas).
 - El **Asistente** apila las dos columnas (En Stock / A Pedir) en una sola.
+- El **Radar** apila las secciones (Pendiente → Solicitado → Ingresado → Notificado) una debajo de la otra, para no romper el ancho en el celular; cada sección tiene su paginador.
 - Las tablas restantes tienen scroll horizontal.
 - Detección de viewport con `useIsMobile` (`matchMedia`).
 
@@ -86,8 +88,10 @@ frontend/
     │   ├── Login.jsx         # Pantalla de login
     │   ├── blocks/
     │   │   ├── AsistenteBlock.jsx
+    │   │   ├── CatalogoBlock.jsx
     │   │   ├── ClienteBlock.jsx
     │   │   ├── ConfigBlock.jsx
+    │   │   ├── LlmAuditBlock.jsx
     │   │   ├── LogsBlock.jsx
     │   │   ├── PedidoBlock.jsx
     │   │   ├── PropuestasBlock.jsx
@@ -112,6 +116,10 @@ frontend/
 ## Notas
 
 - El frontend **no usa router**: la navegación es un estado de pestaña en `App.jsx`.
+- `ConfigBlock` incluye **toggles en caliente** (`app_config`): cambian el comportamiento del backend sin reiniciar y sin tocar el `.env`.
+- `ClienteBlock` valida contactos: exige **al menos email o teléfono** y evita **duplicados** (mismo mail o mismo celular en otro cliente); además guarda **notas de preferencias** para el perfilado.
+- El **Radar** tiene botones de acción manual (despachar pendientes a proveedores, verificar ingresos, notificar ingresos consolidado, notificar agotados) y secciones con paginador.
+- La pestaña **🧠 Auditoría LLM** (solo admin) muestra prompt/respuesta, modelo/proveedor reales y latencia de cada llamada.
 - La búsqueda del Asistente **no se pierde al cambiar de pestaña**: `AsistenteBlock` se mantiene montado (se oculta con `display:none`).
 - El stock se muestra **diferenciado por local** (Local 01 / Local 02); el total solo suma los locales operativos.
 - La tapa de cada libro se carga desde `GET /api/tapas/:ean13` (endpoint público del backend).

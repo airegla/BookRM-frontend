@@ -21,7 +21,11 @@ export const useAsistente = () => {
       setResultado(data);
     } catch (err) {
       console.error('[useAsistente] Error:', err);
-      setError(err.message || 'Error al conectar con el asistente');
+      const raw = err?.message || '';
+      const amigable = /524|timeout|timed out|tiempo de espera|ETIMEDOUT|ECONNRESET|Failed to fetch|NetworkError|gateway/i.test(raw)
+        ? 'Tiempo de espera excedido. Consultá nuevamente más tarde.'
+        : (raw || 'Error al conectar con el asistente');
+      setError(amigable);
     } finally {
       setLoading(false);
     }

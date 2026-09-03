@@ -72,11 +72,15 @@ export const AsistenteBlock = ({ onSeleccionarParaPedido }) => {
       <form onSubmit={handleSubmit} style={{ marginBottom: '24px' }}>
         <textarea
           rows={3}
+          maxLength={300}
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
-          placeholder="Ej: Cliente busca novelas policiales ambientadas en la Patagonia..."
-          style={{ width: '100%', padding: '12px', borderRadius: '6px', border: '1px solid #ccc', fontSize: '0.95rem', resize: 'vertical', boxSizing: 'border-box', marginBottom: '8px' }}
+          placeholder="Ej: Cliente busca novelas policiales ambientadas en la Patagonia... (máx. 300 caracteres)"
+          style={{ width: '100%', padding: '12px', borderRadius: '6px', border: '1px solid #ccc', fontSize: '0.95rem', resize: 'vertical', boxSizing: 'border-box', marginBottom: '4px' }}
         />
+        <div style={{ textAlign: 'right', fontSize: '0.78rem', color: prompt.length > 280 ? '#c62828' : '#999', marginBottom: '8px' }}>
+          {prompt.length}/300
+        </div>
         <div style={{ display: 'flex', gap: '8px' }}>
           <button
             type="submit"

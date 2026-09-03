@@ -66,6 +66,7 @@ export const api = {
   altaRapidaPedido: (data) => request('/pedidos/alta-rapida', { method: 'POST', body: JSON.stringify(data) }),
   updateEstadoPedido: (id, estado) => request(`/pedidos/${id}/estado`, { method: 'PUT', body: JSON.stringify({ estado }) }),
   updateEan13Pedido: (id, ean13_legacy) => request(`/pedidos/${id}/ean13`, { method: 'PUT', body: JSON.stringify({ ean13_legacy }) }),
+  updateDatosPedido: (id, datos) => request(`/pedidos/${id}/datos`, { method: 'PUT', body: JSON.stringify(datos) }),
 
   recomendar: (prompt) => request('/asistente/recomendar', { method: 'POST', body: JSON.stringify({ prompt }) }),
 
@@ -96,6 +97,14 @@ export const api = {
   exportPedidosCsv: (estado = '') => requestCsv('/export/pedidos?estado=' + encodeURIComponent(estado)),
   
   checkIngresos: () => request('/orquestador/check-ingresos', { method: 'POST' }),
+  verificarIngresos: () => request('/orquestador/verificar-ingresos', { method: 'POST' }),
+  despacharPendientes: () => request('/orquestador/despachar-pendientes', { method: 'POST' }),
+  notificarIngresos: () => request('/orquestador/notificar-ingresos', { method: 'POST' }),
+  notificarAgotados: () => request('/orquestador/notificar-agotados', { method: 'POST' }),
+
+  getToggles: () => request('/config/toggles'),
+  setToggle: (clave, valor) => request(`/config/toggles/${encodeURIComponent(clave)}`, { method: 'PUT', body: JSON.stringify({ valor }) }),
+  resetToggle: (clave) => request(`/config/toggles/${encodeURIComponent(clave)}`, { method: 'DELETE' }),
 
   getPropuestas: () => request('/propuestas'),
   getPropuesta: (id) => request(`/propuestas/${id}`),
@@ -104,6 +113,9 @@ export const api = {
   enviarPropuesta: (id) => request(`/propuestas/${id}/enviar`, { method: 'POST' }),
   deletePropuesta: (id) => request(`/propuestas/${id}`, { method: 'DELETE' }),
 
-  getLogs: (limite = 200) => request(`/logs?limite=${encodeURIComponent(limite)}`),
+  getLogs: (limite = 200, tipo = '') => request(`/logs?limite=${encodeURIComponent(limite)}${tipo ? '&tipo=' + encodeURIComponent(tipo) : ''}`),
   clearLogs: () => request('/logs', { method: 'DELETE' }),
+
+  getLlmAudit: (limite = 100, modulo = '') => request(`/llm-audit?limite=${encodeURIComponent(limite)}${modulo ? '&modulo=' + encodeURIComponent(modulo) : ''}`),
+  clearLlmAudit: (dias = 30) => request(`/llm-audit?dias=${encodeURIComponent(dias)}`, { method: 'DELETE' }),
 };
