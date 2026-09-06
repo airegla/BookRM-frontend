@@ -69,6 +69,7 @@ export const api = {
   updateDatosPedido: (id, datos) => request(`/pedidos/${id}/datos`, { method: 'PUT', body: JSON.stringify(datos) }),
 
   recomendar: (prompt, modo = 'auto') => request('/asistente/recomendar', { method: 'POST', body: JSON.stringify({ prompt, modo }) }),
+  getAsistenteTarea: (id) => request(`/asistente/tarea/${id}`),
 
   getConsolidados: () => request('/orquestador/consolidados'),
   getRadarIngresos: () => request('/orquestador/radar-ingresos'),

@@ -13,7 +13,7 @@ import DebugTag from '../../ui/DebugTag';
 export const AsistenteBlock = ({ onSeleccionarParaPedido }) => {
   const [prompt, setPrompt] = useState('');
   const [modo, setModo] = useState('auto'); // auto | contenido | venta
-  const { loading, error, resultado, consultarAsistente, limpiarResultado } = useAsistente();
+  const { loading, error, resultado, mejorando, consultarAsistente, limpiarResultado } = useAsistente();
   const isMobile = useIsMobile();
 
   // alta rápida cliente
@@ -122,7 +122,13 @@ export const AsistenteBlock = ({ onSeleccionarParaPedido }) => {
 
       {error && <div style={{ padding: '12px', backgroundColor: '#ffebee', color: '#c62828', borderRadius: '4px', marginBottom: '16px' }}><strong>Error:</strong> {error}</div>}
 
-      {res.modo === 'contenido' && (
+      {mejorando && (
+        <p style={{ color: '#1a237e', fontSize: '0.85rem', margin: '0 0 12px', background: '#e8eaf6', padding: '8px 10px', borderRadius: '4px' }}>
+          ⏳ Mejorando las sugerencias con IA… (ya podés usar el listado mientras tanto)
+        </p>
+      )}
+
+      {res.modo === 'contenido' && !mejorando && (
         <p style={{ color: '#555', fontSize: '0.85rem', margin: '0 0 12px' }}>🔎 Búsqueda por contenido del catálogo (sin sugerencia de venta).</p>
       )}
       {modo !== 'auto' && (
