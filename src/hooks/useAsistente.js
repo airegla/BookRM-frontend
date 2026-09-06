@@ -10,14 +10,14 @@ export const useAsistente = () => {
   const [error, setError] = useState(null);
   const [resultado, setResultado] = useState({ en_stock: [], a_pedir: [] });
 
-  const consultarAsistente = async (prompt) => {
+  const consultarAsistente = async (prompt, modo = 'auto') => {
     if (!prompt.trim()) return;
 
     setLoading(true);
     setError(null);
 
     try {
-      const data = await api.recomendar(prompt);
+      const data = await api.recomendar(prompt, modo);
       setResultado(data);
     } catch (err) {
       console.error('[useAsistente] Error:', err);

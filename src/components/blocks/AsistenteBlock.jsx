@@ -12,6 +12,7 @@ import DebugTag from '../../ui/DebugTag';
 
 export const AsistenteBlock = ({ onSeleccionarParaPedido }) => {
   const [prompt, setPrompt] = useState('');
+  const [modo, setModo] = useState('auto'); // auto | contenido | venta
   const { loading, error, resultado, consultarAsistente, limpiarResultado } = useAsistente();
   const isMobile = useIsMobile();
 
@@ -41,7 +42,7 @@ export const AsistenteBlock = ({ onSeleccionarParaPedido }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    consultarAsistente(prompt);
+    consultarAsistente(prompt, modo);
   };
 
   const res = resultado || { en_stock: [], a_pedir: [] };
@@ -81,6 +82,30 @@ export const AsistenteBlock = ({ onSeleccionarParaPedido }) => {
         <div style={{ textAlign: 'right', fontSize: '0.78rem', color: prompt.length > 280 ? '#c62828' : '#999', marginBottom: '8px' }}>
           {prompt.length}/300
         </div>
+        {/* Ruta de la consulta: para probar el comportamiento del asistente */}
+        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', alignItems: 'center', marginBottom: '10px', fontSize: '0.8rem' }}>
+          <span style={{ color: '#555' }}>Ruta:</span>
+          {[
+            { id: 'auto', label: 'Auto' },
+            { id: 'contenido', label: 'Contenido (semántico, sin LLM)' },
+            { id: 'venta', label: 'Venta (con LLM)' }
+          ].map((op) => (
+            <button
+              key={op.id}
+              type="button"
+              onClick={() => setModo(op.id)}
+              style={{
+                padding: '6px 12px', borderRadius: '999px', cursor: 'pointer',
+                border: modo === op.id ? '1px solid #1a237e' : '1px solid #ccc',
+                background: modo === op.id ? '#1a237e' : '#fff',
+                color: modo === op.id ? '#fff' : '#555',
+                fontWeight: modo === op.id ? 'bold' : 'normal'
+              }}
+            >
+              {op.label}
+            </button>
+          ))}
+        </div>
         <div style={{ display: 'flex', gap: '8px' }}>
           <button
             type="submit"
@@ -99,6 +124,11 @@ export const AsistenteBlock = ({ onSeleccionarParaPedido }) => {
 
       {res.modo === 'contenido' && (
         <p style={{ color: '#555', fontSize: '0.85rem', margin: '0 0 12px' }}>🔎 Búsqueda por contenido del catálogo (sin sugerencia de venta).</p>
+      )}
+      {modo !== 'auto' && (
+        <p style={{ color: '#555', fontSize: '0.8rem', margin: '0 0 12px', background: '#f5f5f5', padding: '6px 10px', borderRadius: '4px', display: 'inline-block' }}>
+          🛤️ Ruta forzada: {modo === 'contenido' ? 'Contenido (semántico, sin LLM)' : 'Venta (con LLM)'}
+        </p>
       )}
 
       <div style={{ display: 'grid', gridTemplateColumns: (res.a_pedir.length > 0 && !isMobile) ? '1fr 1fr' : '1fr', gap: '20px', alignItems: 'start' }}>

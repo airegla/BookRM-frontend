@@ -68,7 +68,7 @@ export const api = {
   updateEan13Pedido: (id, ean13_legacy) => request(`/pedidos/${id}/ean13`, { method: 'PUT', body: JSON.stringify({ ean13_legacy }) }),
   updateDatosPedido: (id, datos) => request(`/pedidos/${id}/datos`, { method: 'PUT', body: JSON.stringify(datos) }),
 
-  recomendar: (prompt) => request('/asistente/recomendar', { method: 'POST', body: JSON.stringify({ prompt }) }),
+  recomendar: (prompt, modo = 'auto') => request('/asistente/recomendar', { method: 'POST', body: JSON.stringify({ prompt, modo }) }),
 
   getConsolidados: () => request('/orquestador/consolidados'),
   getRadarIngresos: () => request('/orquestador/radar-ingresos'),
