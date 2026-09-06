@@ -156,6 +156,22 @@ export const AsistenteBlock = ({ onSeleccionarParaPedido }) => {
         )}
       </div>
 
+      {res.fuera_catalogo && res.fuera_catalogo.length > 0 && (
+        <div style={{ marginTop: '20px', padding: '16px', background: '#fff8e1', border: '1px solid #fbc02d', borderRadius: '6px' }}>
+          <h3 style={{ color: '#e65100', marginTop: 0, borderBottom: '2px solid #fbc02d', paddingBottom: '8px' }}>📌 Reconocimos el libro, pero no está en el catálogo</h3>
+          <p style={{ color: '#888', fontSize: '0.8rem', margin: '4px 0 12px' }}>Posible referencia detectada por la IA. Conviene consultar disponibilidad con el proveedor.</p>
+          {res.fuera_catalogo.map((f, i) => (
+            <div key={`fuera-${i}`} style={{ padding: '10px 0', borderBottom: i < res.fuera_catalogo.length - 1 ? '1px solid #f0e0a0' : 'none' }}>
+              <div style={{ fontSize: '0.95rem' }}>
+                <strong>{f.Titulo}</strong>{f.Autor ? <span style={{ color: '#555' }}> — {f.Autor}</span> : null}
+              </div>
+              {f.Sinopsis && <p style={{ margin: '6px 0 2px', fontSize: '0.88rem' }}>{f.Sinopsis}</p>}
+              {f.PorQue && <p style={{ margin: '2px 0 0', color: '#777', fontSize: '0.82rem', fontStyle: 'italic' }}>Por qué lo reconocemos: {f.PorQue}</p>}
+            </div>
+          ))}
+        </div>
+      )}
+
       {showClienteRapido && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }} onClick={() => setShowClienteRapido(false)}>
           <div className="modal-card" style={{ background: '#fff', borderRadius: '8px', padding: '20px', width: '360px' }} onClick={(e) => e.stopPropagation()}>
