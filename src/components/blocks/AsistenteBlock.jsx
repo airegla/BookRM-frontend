@@ -46,6 +46,9 @@ export const AsistenteBlock = ({ onSeleccionarParaPedido }) => {
   };
 
   const res = resultado || { en_stock: [], a_pedir: [] };
+  const fueraCatalogo = res.fuera_catalogo || [];
+  const fueraEncontrados = fueraCatalogo.filter((f) => f && f.encontrado);
+  const fueraNoEncontrados = fueraCatalogo.filter((f) => f && !f.encontrado);
 
   return (
     <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
@@ -156,12 +159,21 @@ export const AsistenteBlock = ({ onSeleccionarParaPedido }) => {
         )}
       </div>
 
-      {res.fuera_catalogo && res.fuera_catalogo.length > 0 && (
+      {fueraEncontrados.length > 0 && (
+        <div style={{ marginTop: '20px' }}>
+          <h3 style={{ color: '#2e7d32', borderBottom: '2px solid #2e7d32', paddingBottom: '8px' }}>📌 Libro reconocido — lo encontramos en el catálogo ({fueraEncontrados.length})</h3>
+          {fueraEncontrados.map((libro, i) => (
+            <RecomendacionCard key={`fuera-encontrado-${i}`} libro={libro} tipo={(libro.stock || 0) > 0 ? 'en_stock' : 'a_pedir'} onAltaRapida={onSeleccionarParaPedido} clienteId={clienteSeleccionado} />
+          ))}
+        </div>
+      )}
+
+      {fueraNoEncontrados.length > 0 && (
         <div style={{ marginTop: '20px', padding: '16px', background: '#fff8e1', border: '1px solid #fbc02d', borderRadius: '6px' }}>
           <h3 style={{ color: '#e65100', marginTop: 0, borderBottom: '2px solid #fbc02d', paddingBottom: '8px' }}>📌 Reconocimos el libro, pero no está en el catálogo</h3>
           <p style={{ color: '#888', fontSize: '0.8rem', margin: '4px 0 12px' }}>Posible referencia detectada por la IA. Conviene consultar disponibilidad con el proveedor.</p>
-          {res.fuera_catalogo.map((f, i) => (
-            <div key={`fuera-${i}`} style={{ padding: '10px 0', borderBottom: i < res.fuera_catalogo.length - 1 ? '1px solid #f0e0a0' : 'none' }}>
+          {fueraNoEncontrados.map((f, i) => (
+            <div key={`fuera-${i}`} style={{ padding: '10px 0', borderBottom: i < fueraNoEncontrados.length - 1 ? '1px solid #f0e0a0' : 'none' }}>
               <div style={{ fontSize: '0.95rem' }}>
                 <strong>{f.Titulo}</strong>{f.Autor ? <span style={{ color: '#555' }}> — {f.Autor}</span> : null}
               </div>

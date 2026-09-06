@@ -8,7 +8,7 @@ import { useState, useRef } from 'react';
 import { api } from '../api/api';
 
 const POLL_EVERY_MS = 3000;   // cada 3 s
-const POLL_MAX_MS = 90000;    // hasta 90 s
+const POLL_MAX_MS = 240000;   // hasta 4 min: el LLM en segundo plano puede tardar >90 s
 
 export const useAsistente = () => {
   const [loading, setLoading] = useState(false);
@@ -40,6 +40,7 @@ export const useAsistente = () => {
         pollRef.current = setInterval(async () => {
           try {
             const t = await api.getAsistenteTarea(data.tarea_id);
+            console.log('[useAsistente] poll tarea:', data.tarea_id, t && t.estado);
             if (t.estado === 'listo' && t.resultado) {
               detenerPolling();
               setMejorando(false);
