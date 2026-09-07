@@ -181,8 +181,8 @@ function ManualBlockInner() {
             <h2 className="serif" style={{ fontSize: 18, marginBottom: 8 }}>7. Estado</h2>
             <div style={{ border: `1px solid ${TOKENS.borde}`, borderRadius: 8, padding: 12, fontSize: 12.5 }}>
               <div>✅ Identidad (24.083 filas) — embeddings regenerados</div>
-              <div>✅ Autor biografía (8.022 filas)</div>
-              <div style={{ color: TOKENS.alerta }}>◐ Digesto (sinopsis): pendiente</div>
+              <div>✅ Autor biografía (8.142 filas)</div>
+              <div>✅ Digesto (sinopsis): embeddings regenerados (24.059 filas)</div>
               <div>✅ Marcadores: backend + frontend</div>
             </div>
           </div>
