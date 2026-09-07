@@ -1,6 +1,6 @@
-// ARCHIVO: App.jsx
+// ARCHIVO: App.jsx INTEGRADO CON MANUAL
 // RUTA: frontend/src/App.jsx
-// DESCRIPCIÓN: App con pestañas. En mobile usa navegación inferior fija; en desktop tabs superiores.
+// DESCRIPCIÓN: App con pestañas + Manual Empatía integrado. Copiá este archivo sobre tu App.jsx actual.
 
 import React, { useState } from 'react';
 import { AsistenteBlock } from './components/blocks/AsistenteBlock';
@@ -14,6 +14,7 @@ import { PropuestasBlock } from './components/blocks/PropuestasBlock';
 import { LogsBlock } from './components/blocks/LogsBlock';
 import { CatalogoBlock } from './components/blocks/CatalogoBlock';
 import { LlmAuditBlock } from './components/blocks/LlmAuditBlock';
+import ManualBlock from './components/blocks/ManualBlock'; // <-- NUEVO: Manual Empatía (Semilla v2.0 editorial)
 import { Login } from './components/Login';
 import { api, getUser, getToken, setToken, setUser } from './api/api';
 import { useIsMobile } from './hooks/useIsMobile';
@@ -64,7 +65,8 @@ export function App() {
   const extraTabs = [
     { id: 'radar', icon: '📨', label: 'Radar / Avisos' },
     { id: 'propuestas', icon: '📚', label: 'Propuestas' },
-    { id: 'config', icon: '⚙️', label: 'Configuración' },
+    { id: 'manual', icon: '📖', label: 'Manual Empatía' }, // <-- NUEVO
+    { id: 'config', icon: '⚙', label: 'Configuración' },
     ...(user?.rol === 'admin' ? [{ id: 'usuarios', icon: '👤', label: 'Usuarios' }, { id: 'logs', icon: '📋', label: 'Logs' }, { id: 'llmaudit', icon: '🧠', label: 'Auditoría LLM' }, { id: 'catalogo', icon: '🗂', label: 'Catálogo' }] : [])
   ];
 
@@ -102,8 +104,9 @@ export function App() {
             <Tab id="radar" label="📨 Radar / Avisos" />
             <Tab id="propuestas" label="📚 Propuestas" />
             <Tab id="proveedores" label="🏢 Proveedores" />
-            <Tab id="config" label="⚙️ Config" />
+            <Tab id="config" label="⚙ Config" />
             <Tab id="clientes" label="👥 Clientes" />
+            <Tab id="manual" label="📖 Manual" />
             {user?.rol === 'admin' && <Tab id="usuarios" label="👤 Usuarios" />}
             {user?.rol === 'admin' && <Tab id="logs" label="📋 Logs" />}
             {user?.rol === 'admin' && <Tab id="llmaudit" label="🧠 Auditoría LLM" />}
@@ -136,6 +139,7 @@ export function App() {
         {tabActiva==='llmaudit' && <LlmAuditBlock />}
         {tabActiva==='catalogo' && <CatalogoBlock />}
         {tabActiva==='clientes' && <ClienteBlock />}
+        {tabActiva==='manual' && <ManualBlock />}
       </main>
 
       {isMobile && (

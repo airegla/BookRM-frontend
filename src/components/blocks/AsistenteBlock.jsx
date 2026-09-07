@@ -7,6 +7,7 @@ import { useAsistente } from '../../hooks/useAsistente';
 import { useIsMobile } from '../../hooks/useIsMobile';
 import { RecomendacionCard } from '../ui/RecomendacionCard';
 import { SearchSelect } from '../ui/SearchSelect';
+import { Pagination } from '../ui/Pagination';
 import { api } from '../../api/api.js';
 import DebugTag from '../../ui/DebugTag';
 
@@ -15,6 +16,7 @@ export const AsistenteBlock = ({ onSeleccionarParaPedido }) => {
   const [modo, setModo] = useState('auto'); // auto | contenido | venta
   const { loading, error, resultado, mejorando, consultarAsistente, limpiarResultado } = useAsistente();
   const isMobile = useIsMobile();
+  const [paginaEnStock, setPaginaEnStock] = useState(1);
 
   // alta rápida cliente
   const [clientes, setClientes] = useState([]);
@@ -25,6 +27,8 @@ export const AsistenteBlock = ({ onSeleccionarParaPedido }) => {
   useEffect(()=>{ 
     api.getClientes().then(setClientes).catch(()=>{});
   }, []);
+
+  useEffect(() => { setPaginaEnStock(1); }, [resultado]);
 
   const handleAltaClienteRapida = async () => {
     if(!nuevoCliente.nombre) return alert('Nombre requerido');
@@ -49,6 +53,13 @@ export const AsistenteBlock = ({ onSeleccionarParaPedido }) => {
   const fueraCatalogo = res.fuera_catalogo || [];
   const fueraEncontrados = fueraCatalogo.filter((f) => f && f.encontrado);
   const fueraNoEncontrados = fueraCatalogo.filter((f) => f && !f.encontrado);
+
+  const POR_PAGINA = 15;
+  const totalPaginasEnStock = Math.max(1, Math.ceil((res.en_stock || []).length / POR_PAGINA));
+  const paginaEnStockValida = Math.min(paginaEnStock, totalPaginasEnStock);
+  const enStockPagina = (res.en_stock || []).slice((paginaEnStockValida - 1) * POR_PAGINA, paginaEnStockValida * POR_PAGINA);
+  const esAyuda = res.modo === 'ayuda';
+  const editoriales = res.editoriales || [];
 
   return (
     <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
@@ -117,7 +128,7 @@ export const AsistenteBlock = ({ onSeleccionarParaPedido }) => {
           >
             {loading ? 'Seleccionando propuesta y verificando stock...' : 'Buscar Recomendaciones'}
           </button>
-          {(res.en_stock.length > 0 || res.a_pedir.length > 0) && (
+          {(res.en_stock.length > 0 || res.a_pedir.length > 0 || editoriales.length > 0 || esAyuda) && (
             <button type="button" onClick={limpiarResultado} style={{ padding: '10px 16px', backgroundColor: '#757575', color: '#fff', border: 'none', borderRadius: '4px', fontSize: '0.95rem', cursor: 'pointer' }}>Limpiar</button>
           )}
         </div>
@@ -140,13 +151,54 @@ export const AsistenteBlock = ({ onSeleccionarParaPedido }) => {
         </p>
       )}
 
+      {esAyuda && (
+        <div style={{ background: '#e8eaf6', padding: '16px', borderRadius: '6px', marginBottom: '16px' }}>
+          <h3 style={{ marginTop: 0, color: '#1a237e' }}>💡 Comandos de Empatía</h3>
+          {res.error && <p style={{ color: '#c62828', fontSize: '0.9rem' }}>{res.error}</p>}
+          <ul style={{ lineHeight: '1.9', fontSize: '0.9rem', paddingLeft: '20px' }}>
+            {(res.ayuda || []).map((a, i) => (
+              <li key={i}><code style={{ background: '#fff', padding: '1px 6px', borderRadius: '3px' }}>{a.m}</code> — {a.d}</li>
+            ))}
+          </ul>
+          <p style={{ color: '#666', fontSize: '0.8rem', marginBottom: 0 }}>
+            Un marcador es una ruta pura: va al inicio de la consulta y nunca se mezcla con lenguaje libre.
+          </p>
+        </div>
+      )}
+
+      {editoriales.length > 0 && (
+        <div style={{ background: '#fff', padding: '16px', borderRadius: '6px', border: '1px solid #e0e0e0', marginBottom: '16px' }}>
+          <h3 style={{ color: '#2e7d32', borderBottom: '2px solid #2e7d32', paddingBottom: '8px', marginTop: 0 }}>🏢 Editoriales ({editoriales.length})</h3>
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.9rem' }}>
+            <thead>
+              <tr style={{ textAlign: 'left', color: '#555', borderBottom: '2px solid #ccc' }}>
+                <th style={{ padding: '6px 8px' }}>Editorial</th>
+                <th style={{ padding: '6px 8px' }}>Títulos</th>
+                <th style={{ padding: '6px 8px' }}>Stock</th>
+              </tr>
+            </thead>
+            <tbody>
+              {editoriales.map((e, i) => (
+                <tr key={i} style={{ borderBottom: '1px solid #eee' }}>
+                  <td style={{ padding: '6px 8px' }}>{e.editorial}</td>
+                  <td style={{ padding: '6px 8px' }}>{e.titulos}</td>
+                  <td style={{ padding: '6px 8px' }}>{e.stock}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {!esAyuda && editoriales.length === 0 && (
       <div style={{ display: 'grid', gridTemplateColumns: (res.a_pedir.length > 0 && !isMobile) ? '1fr 1fr' : '1fr', gap: '20px', alignItems: 'start' }}>
         <div>
           <h3 style={{ color: '#2e7d32', borderBottom: '2px solid #2e7d32', paddingBottom: '8px' }}>En Stock ({res.en_stock.length})</h3>
           {res.en_stock.length === 0 && !loading && <p style={{ color: '#999', fontStyle: 'italic', fontSize: '0.9rem' }}>Sin resultados en stock local.</p>}
-          {res.en_stock.map((libro, index) => (
+          {enStockPagina.map((libro, index) => (
             <RecomendacionCard key={`stock-${index}`} libro={libro} tipo="en_stock" onAltaRapida={onSeleccionarParaPedido} clienteId={clienteSeleccionado} />
           ))}
+          <Pagination page={paginaEnStockValida} totalPages={totalPaginasEnStock} onChange={setPaginaEnStock} />
         </div>
         {res.a_pedir.length > 0 && (
           <div>
@@ -158,6 +210,7 @@ export const AsistenteBlock = ({ onSeleccionarParaPedido }) => {
           </div>
         )}
       </div>
+      )}
 
       {fueraEncontrados.length > 0 && (
         <div style={{ marginTop: '20px' }}>

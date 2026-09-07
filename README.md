@@ -43,7 +43,7 @@ Todas tras el login (JWT). Roles `admin`/`vendedor`.
 
 | Pestaña | Componente | Descripción |
 |---------|------------|-------------|
-| 🤖 Asistente | `AsistenteBlock` | Recomendaciones por contenido con stock por local (01/02), precio y tapa. Consulta limitada a 300 caracteres (contador). Modo contenido: digesto completo y búsqueda por autor. "A Pedir" solo si hay resultados |
+| 🤖 Asistente | `AsistenteBlock` | Recomendaciones por contenido con stock por local (01/02), precio y tapa. **30 candidatos paginados (15/pág)**; en venta, top 17 al LLM. Selector de ruta (Auto/Contenido/Venta). Modo contenido: digesto completo y búsqueda por autor. "A Pedir" y "Fuera de catálogo" como secciones aparte |
 | 📦 Pedidos | `PedidoBlock` | Alta rápida con cantidad/observaciones, cambio de estado, edición de EAN13/cant/obs (Pendiente), badge `Intentos: X/3` |
 | 👥 Clientes | `ClienteBlock` | CRUD, temáticas (SearchMultiSelect), historial, notas de preferencias y anti-duplicados (mail/teléfono únicos) |
 | 🏢 Proveedores | `ProveedoresBlock` | CRUD (id=1 protegido) |
@@ -52,7 +52,7 @@ Todas tras el login (JWT). Roles `admin`/`vendedor`.
 | ⚙️ Config | `ConfigBlock` | Config de empresa (modal) + **toggles** de comportamiento (ON/OFF, valores, volver a default) |
 | 👤 Usuarios | `UsuariosBlock` | CRUD de usuarios (solo admin) |
 | 📋 Logs | `LogsBlock` | Log de actividad (solo admin): ver y limpiar |
-| 🧠 Auditoría LLM | `LlmAuditBlock` | Auditoría de llamadas LLM (solo admin): filtro por módulo, detalle de prompt/respuesta, modelo y latencia |
+| 🧠 Auditoría LLM | `LlmAuditBlock` | Auditoría de llamadas LLM (solo admin): filtro por módulo, detalle de prompt/respuesta, modelo y latencia, y **modal con consulta + listado de libros + descarga CSV** |
 
 Todas las listas tienen **buscador + paginador**; los selects con muchas opciones tienen **búsqueda integrada**.
 

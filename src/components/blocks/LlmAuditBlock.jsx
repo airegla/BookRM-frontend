@@ -13,6 +13,7 @@ export const LlmAuditBlock = () => {
   const [modulo, setModulo] = useState('');
   const [expanded, setExpanded] = useState(null);
   const [msg, setMsg] = useState(null);
+  const [modal, setModal] = useState(null);
 
   const cargar = async () => {
     setError(null);
@@ -36,6 +37,18 @@ export const LlmAuditBlock = () => {
   const truncar = (s, n = 120) => {
     const t = String(s || '');
     return t.length > n ? t.slice(0, n) + '…' : t;
+  };
+
+  const descargarCsv = (fila) => {
+    const filas = [['Titulo', 'Autor'], ...(fila.libros || []).map((l) => [l.titulo, l.autor])];
+    const csv = filas.map((r) => r.map((c) => `"${String(c || '').replace(/"/g, '""')}"`).join(',')).join('\n');
+    const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `audit-${fila.id}-libros.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
   return (
@@ -91,6 +104,9 @@ export const LlmAuditBlock = () => {
                         <div style={{ marginBottom: '8px' }}><strong>Prompt completo:</strong><pre style={{ whiteSpace: 'pre-wrap', background: '#fff', border: '1px solid #eee', padding: '8px', borderRadius: '4px', fontSize: '0.78rem' }}>{f.prompt_enviado || f.prompt_resumen}</pre></div>
                         <div style={{ marginBottom: '8px' }}><strong>Respuesta:</strong><pre style={{ whiteSpace: 'pre-wrap', background: '#fff', border: '1px solid #eee', padding: '8px', borderRadius: '4px', fontSize: '0.78rem' }}>{f.respuesta_llm || f.respuesta_resumen}</pre></div>
                         {f.error_msg && <div style={{ color: '#c62828' }}><strong>Error:</strong> {f.error_msg}</div>}
+                        <div style={{ marginTop: '8px' }}>
+                          <button onClick={() => setModal(f)} style={{ padding: '6px 12px', cursor: 'pointer' }}>📋 Ver consulta + listado de libros</button>
+                        </div>
                       </td>
                     </tr>
                   )}
@@ -99,6 +115,36 @@ export const LlmAuditBlock = () => {
             </tbody>
           </table>
         )
+      )}
+
+      {modal && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }} onClick={() => setModal(null)}>
+          <div className="modal-card" style={{ background: '#fff', borderRadius: '8px', padding: '20px', width: '560px', maxHeight: '80vh', overflow: 'auto' }} onClick={(e) => e.stopPropagation()}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h3 style={{ margin: 0 }}>📋 Consulta #{modal.id}</h3>
+              <button onClick={() => setModal(null)} style={{ border: 'none', background: 'none', fontSize: '1.3rem', cursor: 'pointer' }}>×</button>
+            </div>
+            <p style={{ fontSize: '0.78rem', color: '#666', margin: '8px 0' }}>{new Date(modal.fecha).toLocaleString('es-AR')} · {modal.modulo} · {modal.proveedor || '—'} · {truncar(modal.modelo_utilizado, 30) || '—'}</p>
+            <div style={{ marginBottom: '12px' }}>
+              <strong>Consulta:</strong>
+              <pre style={{ whiteSpace: 'pre-wrap', background: '#f5f5f5', padding: '8px', borderRadius: '4px', fontSize: '0.82rem', margin: '6px 0 0' }}>{modal.consulta || modal.prompt_resumen}</pre>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+              <strong>Libros ({(modal.libros || []).length})</strong>
+              <button onClick={() => descargarCsv(modal)} style={{ padding: '6px 12px', cursor: 'pointer' }}>⬇ Descargar CSV</button>
+            </div>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.82rem' }}>
+              <thead><tr style={{ background: '#eee' }}><th style={{ padding: '6px', textAlign: 'left' }}>Título</th><th style={{ padding: '6px', textAlign: 'left' }}>Autor</th></tr></thead>
+              <tbody>
+                {(modal.libros || []).length === 0 ? (
+                  <tr><td colSpan={2} style={{ padding: '8px', color: '#999' }}>Sin listado de libros para esta llamada.</td></tr>
+                ) : (modal.libros || []).map((l, i) => (
+                  <tr key={i} style={{ borderBottom: '1px solid #eee' }}><td style={{ padding: '6px' }}>{l.titulo}</td><td style={{ padding: '6px', color: '#555' }}>{l.autor}</td></tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
       )}
     </div>
   );
