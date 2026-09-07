@@ -53,6 +53,7 @@ Todas tras el login (JWT). Roles `admin`/`vendedor`.
 | 👤 Usuarios | `UsuariosBlock` | CRUD de usuarios (solo admin) |
 | 📋 Logs | `LogsBlock` | Log de actividad (solo admin): ver y limpiar |
 | 🧠 Auditoría LLM | `LlmAuditBlock` | Auditoría de llamadas LLM (solo admin): filtro por módulo, detalle de prompt/respuesta, modelo y latencia, y **modal con consulta + listado de libros + descarga CSV** |
+| 📖 Manual | `ManualBlock` | Manual de uso de Empatía integrado: modos, lenguaje natural y **marcadores `$`** (con copiar al portapapeles) |
 
 Todas las listas tienen **buscador + paginador**; los selects con muchas opciones tienen **búsqueda integrada**.
 
@@ -93,6 +94,7 @@ frontend/
     │   │   ├── ConfigBlock.jsx
     │   │   ├── LlmAuditBlock.jsx
     │   │   ├── LogsBlock.jsx
+    │   │   ├── ManualBlock.jsx
     │   │   ├── PedidoBlock.jsx
     │   │   ├── PropuestasBlock.jsx
     │   │   ├── ProveedoresBlock.jsx
@@ -120,6 +122,7 @@ frontend/
 - `ClienteBlock` valida contactos: exige **al menos email o teléfono** y evita **duplicados** (mismo mail o mismo celular en otro cliente); además guarda **notas de preferencias** para el perfilado.
 - El **Radar** tiene botones de acción manual (despachar pendientes a proveedores, verificar ingresos, notificar ingresos consolidado, notificar agotados) y secciones con paginador.
 - La pestaña **🧠 Auditoría LLM** (solo admin) muestra prompt/respuesta, modelo/proveedor reales y latencia de cada llamada.
+- La pestaña **📖 Manual** muestra el manual de uso de Empatía integrado (modos, lenguaje natural y **marcadores `$`**), con botones para copiar comandos al portapapeles.
 - La búsqueda del Asistente **no se pierde al cambiar de pestaña**: `AsistenteBlock` se mantiene montado (se oculta con `display:none`).
 - El stock se muestra **diferenciado por local** (Local 01 / Local 02); el total solo suma los locales operativos.
 - La tapa de cada libro se carga desde `GET /api/tapas/:ean13` (endpoint público del backend).
