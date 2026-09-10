@@ -59,7 +59,6 @@ export const AsistenteBlock = ({ onSeleccionarParaPedido }) => {
   const paginaEnStockValida = Math.min(paginaEnStock, totalPaginasEnStock);
   const enStockPagina = (res.en_stock || []).slice((paginaEnStockValida - 1) * POR_PAGINA, paginaEnStockValida * POR_PAGINA);
   const esAyuda = res.modo === 'ayuda';
-  const editoriales = res.editoriales || [];
 
   return (
     <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
@@ -128,7 +127,7 @@ export const AsistenteBlock = ({ onSeleccionarParaPedido }) => {
           >
             {loading ? 'Seleccionando propuesta y verificando stock...' : 'Buscar Recomendaciones'}
           </button>
-          {(res.en_stock.length > 0 || res.a_pedir.length > 0 || editoriales.length > 0 || esAyuda) && (
+          {(res.en_stock.length > 0 || res.a_pedir.length > 0 || esAyuda) && (
             <button type="button" onClick={limpiarResultado} style={{ padding: '10px 16px', backgroundColor: '#757575', color: '#fff', border: 'none', borderRadius: '4px', fontSize: '0.95rem', cursor: 'pointer' }}>Limpiar</button>
           )}
         </div>
@@ -166,31 +165,7 @@ export const AsistenteBlock = ({ onSeleccionarParaPedido }) => {
         </div>
       )}
 
-      {editoriales.length > 0 && (
-        <div style={{ background: '#fff', padding: '16px', borderRadius: '6px', border: '1px solid #e0e0e0', marginBottom: '16px' }}>
-          <h3 style={{ color: '#2e7d32', borderBottom: '2px solid #2e7d32', paddingBottom: '8px', marginTop: 0 }}>🏢 Editoriales ({editoriales.length})</h3>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.9rem' }}>
-            <thead>
-              <tr style={{ textAlign: 'left', color: '#555', borderBottom: '2px solid #ccc' }}>
-                <th style={{ padding: '6px 8px' }}>Editorial</th>
-                <th style={{ padding: '6px 8px' }}>Títulos</th>
-                <th style={{ padding: '6px 8px' }}>Stock</th>
-              </tr>
-            </thead>
-            <tbody>
-              {editoriales.map((e, i) => (
-                <tr key={i} style={{ borderBottom: '1px solid #eee' }}>
-                  <td style={{ padding: '6px 8px' }}>{e.editorial}</td>
-                  <td style={{ padding: '6px 8px' }}>{e.titulos}</td>
-                  <td style={{ padding: '6px 8px' }}>{e.stock}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-
-      {!esAyuda && editoriales.length === 0 && (
+      {!esAyuda && (
       <div style={{ display: 'grid', gridTemplateColumns: (res.a_pedir.length > 0 && !isMobile) ? '1fr 1fr' : '1fr', gap: '20px', alignItems: 'start' }}>
         <div>
           <h3 style={{ color: '#2e7d32', borderBottom: '2px solid #2e7d32', paddingBottom: '8px' }}>En Stock ({res.en_stock.length})</h3>

@@ -21,7 +21,9 @@ const marcadores = [
   { cmd: '$editorial X', que: 'filtra por editorial', ej: '$editorial emecé' },
   { cmd: '$materia X', que: 'filtra por materia (CDU/término)', ej: '$materia cocina' },
   { cmd: '$titulo X', que: 'filtra por título', ej: '$titulo rayuela' },
-  { cmd: '$editoriales X', que: 'agrega: en qué editoriales está el título X', ej: '$editoriales rayuela', highlight: true },
+  { cmd: '$sinopsis X', que: 'busca palabras clave dentro de la sinopsis (digesto)', ej: '$sinopsis novela policial' },
+  { cmd: '$bio X', que: 'busca palabras clave dentro de la biografía del autor', ej: '$bio borges' },
+  { cmd: '$precio MIN MAX', que: 'filtra por rango de precios (dos valores numéricos)', ej: '$precio 15000 25000' },
   { cmd: '$autor X $editorial Y', que: 'intersección AND de dos campos', ej: '$autor borges $editorial emecé', highlight: true },
   { cmd: '$ayuda', que: 'devuelve este manual inline', ej: '$ayuda' },
 ];
@@ -141,7 +143,7 @@ function ManualBlockInner() {
                 <li><b style={{ color: TOKENS.principal }}>Ruta pura:</b> si empieza con $, se parsea completa como comando.</li>
                 <li><b style={{ color: TOKENS.principal }}>Combinables por AND:</b> dos filtros se intersectan.</li>
                 <li>Un solo filtro es el caso degenerado; su valor real aparece al combinar dos.</li>
-                <li><span className="mono">$editoriales X</span> es la única salida agregada.</li>
+                <li><span className="mono">$precio MIN MAX</span> es el único filtro numérico: rango inclusivo entre mínimo y máximo.</li>
                 <li>Si un filtro no encuentra resultados, devuelve vacío sin caer al recall.</li>
               </ol>
             </div>
@@ -161,7 +163,9 @@ function ManualBlockInner() {
             <div><span style={{ color: TOKENS.exito }}>$autor borges</span> <span style={{ color: '#8B8A89' }}>→ filtro exacto por autor (sin LLM)</span></div>
             <div><span style={{ color: TOKENS.exito }}>$editorial emecé</span> <span style={{ color: '#8B8A89' }}>→ todo lo de Emecé</span></div>
             <div><span style={{ color: TOKENS.exito }}>$materia cocina</span> <span style={{ color: '#8B8A89' }}>→ libros con esa materia</span></div>
-            <div><span style={{ color: TOKENS.exito }}>$editoriales rayuela</span> <span style={{ color: '#8B8A89' }}>→ Alfaguara, Sudamericana, Cátedra… (agregado)</span></div>
+            <div><span style={{ color: TOKENS.exito }}>$sinopsis novela policial</span> <span style={{ color: '#8B8A89' }}>→ palabras clave en la sinopsis (digesto)</span></div>
+            <div><span style={{ color: TOKENS.exito }}>$bio borges</span> <span style={{ color: '#8B8A89' }}>→ palabras clave en la biografía del autor</span></div>
+            <div><span style={{ color: TOKENS.exito }}>$precio 15000 25000</span> <span style={{ color: '#8B8A89' }}>→ libros entre $15.000 y $25.000</span></div>
             <div><span style={{ color: '#E8C170' }}>$autor borges $editorial emecé</span> <span style={{ color: '#8B8A89' }}>→ intersección: Borges publicado por Emecé</span></div>
             <div><span style={{ color: '#E8C170' }}>$titulo rayuela $editorial sudamericana</span> <span style={{ color: '#8B8A89' }}>→ edición puntual de una editorial</span></div>
           </div>
