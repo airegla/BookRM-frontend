@@ -66,8 +66,7 @@ export function App() {
     { id: 'radar', icon: '📨', label: 'Radar / Avisos' },
     { id: 'propuestas', icon: '📚', label: 'Propuestas' },
     { id: 'manual', icon: '📖', label: 'Manual Empatía' }, // <-- NUEVO
-    { id: 'config', icon: '⚙', label: 'Configuración' },
-    ...(user?.rol === 'admin' ? [{ id: 'usuarios', icon: '👤', label: 'Usuarios' }, { id: 'logs', icon: '📋', label: 'Logs' }, { id: 'llmaudit', icon: '🧠', label: 'Auditoría LLM' }, { id: 'catalogo', icon: '🗂', label: 'Catálogo' }] : [])
+        ...(user?.rol === 'admin' ? [{ id: 'config', icon: '⚙', label: 'Configuración' },{ id: 'usuarios', icon: '👤', label: 'Usuarios' }, { id: 'logs', icon: '📋', label: 'Logs' }, { id: 'llmaudit', icon: '🧠', label: 'Auditoría LLM' }, { id: 'catalogo', icon: '🗂', label: 'Catálogo' }] : [])
   ];
 
   const NavButton = ({ id, icon, label }) => (
@@ -100,13 +99,13 @@ export function App() {
         <nav style={{ background: '#fff', borderBottom: '1px solid #e0e0e0' }}>
           <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', gap: '4px', padding: '0 16px', flexWrap: 'wrap' }}>
             <Tab id="asistente" label="🤖 Asistente" />
+            <Tab id="manual" label="📖 Manual" />
             <Tab id="pedidos" label="📦 Pedidos" />
             <Tab id="radar" label="📨 Radar / Avisos" />
             <Tab id="propuestas" label="📚 Propuestas" />
             <Tab id="proveedores" label="🏢 Proveedores" />
-            <Tab id="config" label="⚙ Config" />
+            {user?.rol === 'admin' && <Tab id="config" label="⚙ Config" />}
             <Tab id="clientes" label="👥 Clientes" />
-            <Tab id="manual" label="📖 Manual" />
             {user?.rol === 'admin' && <Tab id="usuarios" label="👤 Usuarios" />}
             {user?.rol === 'admin' && <Tab id="logs" label="📋 Logs" />}
             {user?.rol === 'admin' && <Tab id="llmaudit" label="🧠 Auditoría LLM" />}
