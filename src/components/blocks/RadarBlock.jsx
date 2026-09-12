@@ -128,8 +128,8 @@ export const RadarBlock = () => {
 
   const resumenAccion = (nombre, r) => {
     switch (nombre) {
-      case 'despachar': return `Pedidos despachados: ${r.pedidos_despachados} | Grupos: ${r.grupos} | Expirados a Agotado: ${r.expirados}`;
-      case 'verificar': return `Revisados: ${r.revisados} | Pasaron a Ingresado: ${r.actualizados}`;
+      case 'despachar': return `Envío a proveedores: ${r.envio_proveedor ? 'ON' : 'OFF (solo control)'} | Enviados: ${r.proveedores_enviados ?? 0} | Grupos: ${r.grupos} | Control: ${r.control_enviados ? 'enviado' : 'no'} | Expirados a Agotado: ${r.expirados}`;
+      case 'verificar': return `Revisados: ${r.revisados} | Pasaron a Ingresado: ${r.actualizados}${r.aviso?.avisados ? ` | Telegram (para separar): ${r.aviso.avisados}` : ''}`;
       case 'notificarIngresos': return `Grupos: ${r.grupos} | Mails enviados: ${r.enviados} | Sin email (marcados Notificado): ${r.sin_email}`;
       case 'notificarAgotados': return `Grupos: ${r.grupos} | Mails enviados: ${r.enviados} | Sin email: ${r.sin_email}`;
       default: return JSON.stringify(r).slice(0, 200);
